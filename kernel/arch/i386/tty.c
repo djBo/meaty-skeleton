@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <kernel/tty.h>
+#include <kernel/sysio.h>
 
 #include "vga.h"
 
@@ -29,6 +30,28 @@ void terminal_initialize(void) {
 	}
 }
 
+void terminal_movecursor() {
+    const uint16_t pos = terminal_row * VGA_WIDTH + terminal_column;
+    outportb(0x3D4, 14);
+    outportb(0x3D5, pos >> 8);
+    outportb(0x3D4, 15);
+    outportb(0x3D5, pos);
+}
+
+void terminal_scroll() {
+    const uint16_t space = 0x20 | (terminal_color << 8);
+    if (terminal_row >= VGA_HEIGHT)
+    {
+        for (uint32_t i = 0; i < (VGA_HEIGHT - 1) * VGA_WIDTH; i++) {
+            terminal_buffer[i] = terminal_buffer[i + VGA_WIDTH];
+        }
+        for (uint32_t i = (VGA_HEIGHT - 1) * VGA_WIDTH; i < VGA_HEIGHT*VGA_WIDTH; i++) {
+            terminal_buffer[i] = space;
+        }
+        terminal_row = VGA_HEIGHT - 1;
+    }
+}
+
 void terminal_setcolor(uint8_t color) {
 	terminal_color = color;
 }
@@ -40,12 +63,29 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
 
 void terminal_putchar(char c) {
 	unsigned char uc = c;
-	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+
+	if (c == 0x08 && terminal_column) {
+	    terminal_column--;
 	}
+	else if (c == 0x09) {
+	    terminal_column = (terminal_column + 8) & ~(8-1);
+	}
+	else if (c == '\n') {
+	    terminal_column = 0;
+	    terminal_row++;
+	}
+	else if (c >= ' ') {
+	    terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
+	    terminal_column++;
+	}
+
+	if (terminal_column >= VGA_WIDTH) {
+	    terminal_column = 0;
+	    terminal_row++;
+	}
+
+	terminal_scroll();
+	terminal_movecursor();
 }
 
 void terminal_write(const char* data, size_t size) {
