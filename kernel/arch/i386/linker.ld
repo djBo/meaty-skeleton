@@ -1,7 +1,7 @@
 /* The bootloader will look at this image and start execution at the symbol
    designated at the entry point. */
 ENTRY(_start)
-
+/*OUTPUT_FORMAT("binary")*/
 /* Tell where the various sections of the object files will be put in the final
    kernel image. */
 SECTIONS
@@ -15,7 +15,9 @@ SECTIONS
 	   Next we'll put the .text section. */
 	.text BLOCK(4K) : ALIGN(4K)
 	{
+		mboot = .; _mboot = .; __mboot = .;
 		*(.multiboot)
+		code = .; _code = .; __code = .;
 		*(.text)
 	}
 
@@ -28,15 +30,19 @@ SECTIONS
 	/* Read-write data (initialized) */
 	.data BLOCK(4K) : ALIGN(4K)
 	{
+		data = .; _data = .; __data = .;
 		*(.data)
 	}
 
 	/* Read-write data (uninitialized) and stack */
 	.bss BLOCK(4K) : ALIGN(4K)
 	{
+		bss = .; _bss = .; __bss = .;
 		*(COMMON)
 		*(.bss)
 	}
+
+	end = .; _end = .; __end = .;
 
 	/* The compiler may produce other sections, put them in the proper place in
 	   in this file, if you'd like to include them in the final kernel. */

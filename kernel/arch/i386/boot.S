@@ -1,7 +1,9 @@
 # Declare constants for the multiboot header.
 .set ALIGN,    1<<0             # align loaded modules on page boundaries
 .set MEMINFO,  1<<1             # provide memory map
-.set FLAGS,    ALIGN | MEMINFO  # this is the Multiboot 'flag' field
+.set GRAPH,    1<<2             # provide graphics mode if possible
+.set AOUT,    1<<16             # boot binary kernel
+.set FLAGS,    ALIGN | MEMINFO #| GRAPH #| AOUT  # this is the Multiboot 'flag' field
 .set MAGIC,    0x1BADB002       # 'magic number' lets bootloader find the header
 .set CHECKSUM, -(MAGIC + FLAGS) # checksum of above, to prove we are multiboot
 
@@ -11,6 +13,18 @@
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
+
+# These values are declared in linker.ld
+.long mboot
+.long code
+.long bss
+.long end
+.long _start
+
+.long 0
+.long 800
+.long 600
+.long 32
 
 # Reserve a stack for the initial thread.
 .section .bss
@@ -30,6 +44,8 @@ _start:
 	call _init
 
 	# Transfer control to the main kernel.
+	push %esp
+	push %ebx
 	call kernel_main
 
 	# Hang if kernel_main unexpectedly returns.
