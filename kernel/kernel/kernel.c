@@ -5,5 +5,5 @@
 
 void kernel_main(multiboot_info_t *mb_ptr) {
 	terminal_initialize();
-	printf("Hello, kernel World!\n");
+	printf("Hello, %s World %d %x !\n", "kernel", 123, 123);
 }

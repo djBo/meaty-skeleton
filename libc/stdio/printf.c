@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static bool print(const char* data, size_t length) {
@@ -59,6 +60,32 @@ int printf(const char* restrict format, ...) {
 				return -1;
 			}
 			if (!print(str, len))
+				return -1;
+			written += len;
+		} else if (*format == 'd') {
+			format++;
+			int i = va_arg(parameters, int);
+			char tmp[21]; // 2^64 – 1 = 18446744073709551615 (20 digits)
+			itoa(i, tmp, 10);
+			size_t len = strlen(tmp);
+			if (maxrem < len) {
+				// TODO: Set errno to EOVERFLOW.
+				return -1;
+			}
+			if (!print(tmp, len))
+				return -1;
+			written += len;
+		} else if (*format == 'x') {
+			format++;
+			int i = va_arg(parameters, int);
+			char tmp[9];
+			itoa(i, tmp, 16);
+			size_t len = strlen(tmp);
+			if (maxrem < len) {
+				// TODO: Set errno to EOVERFLOW.
+				return -1;
+			}
+			if (!print(tmp, len))
 				return -1;
 			written += len;
 		} else {
