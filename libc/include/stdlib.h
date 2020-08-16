@@ -13,6 +13,9 @@ void abort(void);
 int abs (int i);
 void itoa(int input, char *buffer, int radix);
 
+int rand();
+void srand(unsigned int);
+
 #ifdef __cplusplus
 }
 #endif

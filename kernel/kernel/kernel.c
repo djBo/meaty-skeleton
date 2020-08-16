@@ -20,6 +20,10 @@ void kernel_main(multiboot_info_t *mb_ptr) {
 
 	__asm__ __volatile__ ("sti");
 
+	for (int i = 0; i < 10; i++) {
+	    printf("%d\n", rand());
+	}
+
 	for(;;) {
         __asm__ __volatile__ ("hlt");
     }

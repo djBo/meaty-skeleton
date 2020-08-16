@@ -2,13 +2,13 @@
 #include <kernel/sysio.h>
 #include <kernel/irq.h>
 
+#include <stdlib.h>
+
 volatile unsigned long timer_ticks = 0;
 
 void timer_handler(registers_t *regs) {
     timer_ticks++;
-    if (timer_ticks % 100 == 0) {
-        puts("One second has passed");
-    }
+    srand(rand());
 }
 
 void timer_phase(int hz) {
