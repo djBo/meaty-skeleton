@@ -6,7 +6,7 @@
 
 volatile unsigned long timer_ticks = 0;
 
-void timer_handler(registers_t *regs) {
+void timer_handler(__attribute__((unused)) registers_t *regs) {
     timer_ticks++;
     srand(rand());
 }

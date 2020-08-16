@@ -17,6 +17,14 @@ static size_t terminal_column;
 static uint8_t terminal_color;
 static uint16_t* terminal_buffer;
 
+void terminal_movecursor() {
+    const uint16_t pos = terminal_row * VGA_WIDTH + terminal_column;
+    outportb(0x3D4, 14);
+    outportb(0x3D5, pos >> 8);
+    outportb(0x3D4, 15);
+    outportb(0x3D5, pos);
+}
+
 void terminal_initialize(void) {
 	terminal_row = 0;
 	terminal_column = 0;
@@ -28,14 +36,7 @@ void terminal_initialize(void) {
 			terminal_buffer[index] = vga_entry(' ', terminal_color);
 		}
 	}
-}
-
-void terminal_movecursor() {
-    const uint16_t pos = terminal_row * VGA_WIDTH + terminal_column;
-    outportb(0x3D4, 14);
-    outportb(0x3D5, pos >> 8);
-    outportb(0x3D4, 15);
-    outportb(0x3D5, pos);
+	terminal_movecursor();
 }
 
 void terminal_scroll() {
