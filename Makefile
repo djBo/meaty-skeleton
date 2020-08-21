@@ -36,13 +36,13 @@ CC:=$(CC) -isystem=$(INCLUDEDIR)
 define GRUB
 set timeout=1
 menuentry "Genesis" {
-	multiboot /boot/kernel.bin
+	multiboot /boot/kernel.bin args
 }
 endef
 
 export
 
-.PHONY: all clean headers build iso reset
+.PHONY: all clean headers build iso reset docker
 
 all: iso qemu
 
@@ -79,3 +79,6 @@ clean:
 reset:
 	find . -type d -exec chmod 0755 {} \;
 	find . -type f -exec chmod 0644 {} \;
+
+docker:
+	docker build -t genesis docker
