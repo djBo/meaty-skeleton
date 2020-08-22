@@ -9,6 +9,9 @@
 #include <kernel/timer.h>
 #include <kernel/tty.h>
 
+extern uint32_t __mboot;
+extern uint32_t __end;
+
 static void debug_flags(multiboot_info_t *mb_ptr) {
     printf("Flags: 0x%x\n", mb_ptr->flags);
 
@@ -38,12 +41,26 @@ static void debug_flags(multiboot_info_t *mb_ptr) {
 
     // Check
     if ((mb_ptr->flags & MULTIBOOT_INFO_ELF_SHDR) == MULTIBOOT_INFO_ELF_SHDR) {
-        printf("ELF: 0x%x\n", mb_ptr->u.elf_sec.addr);
+        printf("ELF: 0x%x, size: %d, count: %d\n", mb_ptr->u.elf_sec.addr, mb_ptr->u.elf_sec.size, mb_ptr->u.elf_sec.num);
     }
 
     // Check
     if ((mb_ptr->flags & MULTIBOOT_INFO_MEM_MAP) == MULTIBOOT_INFO_MEM_MAP) {
-        printf("Map: 0x%x, size: %d\n", mb_ptr->mmap_addr, mb_ptr->mmap_length);
+        printf("Map: 0x%x, length: %d\n", mb_ptr->mmap_addr, mb_ptr->mmap_length);
+
+        multiboot_memory_map_t *mmap;
+        for (mmap = (multiboot_memory_map_t *) mb_ptr->mmap_addr;
+                (unsigned long) mmap < mb_ptr->mmap_addr + mb_ptr->mmap_length;
+                mmap = (multiboot_memory_map_t *) ((unsigned long) mmap + mmap->size + sizeof (mmap->size)))
+            printf (" size = 0x%x, base_addr = 0x%x%08x,"
+                            " length = 0x%x%08x, type = 0x%x\n",
+                            (unsigned) mmap->size,
+                            (unsigned) (mmap->addr >> 32),
+                            (unsigned) (mmap->addr & 0xffffffff),
+                            (unsigned) (mmap->len >> 32),
+                            (unsigned) (mmap->len & 0xffffffff),
+                            (unsigned) mmap->type);
+
     }
 
     if ((mb_ptr->flags & MULTIBOOT_INFO_DRIVE_INFO) == MULTIBOOT_INFO_DRIVE_INFO) {
@@ -89,7 +106,8 @@ void kernel_main(multiboot_info_t *mb_ptr, uint32_t stack_ptr) {
     init_timer();
     init_keyboard();
 
-    printf("Stack: 0x%x\n", stack_ptr);
+    printf("Kernel start: 0x%x, end: 0x%x\n", &__mboot, &__end);
+    printf("Stack: 0x%x 0x%x\n", stack_ptr, &stack_ptr);
     debug_flags(mb_ptr);
 
     __asm__ __volatile__ ("sti");

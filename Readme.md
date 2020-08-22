@@ -58,6 +58,8 @@ At a maximum I'd like to perform the above in user mode, with ``program.c`` bein
 * Add minimal keyboard support and implement getchar  
   More from BrandonF, with minor additions.
 
+* Replace the poor-man's printf with something more [substantial](https://www.menie.org/georges/embedded/printf-stdarg.c)
+
 
 
 
