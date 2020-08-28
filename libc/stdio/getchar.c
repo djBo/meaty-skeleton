@@ -6,9 +6,9 @@
 
 int getchar() {
 #if defined(__is_libk)
-    return keyboard_getch();
+	return keyboard_getch();
 #else
-    // TODO: Implement stdio and the write system call.
+	// TODO: Implement stdio and the write system call.
 #endif
-    return 0;
+	return 0;
 }

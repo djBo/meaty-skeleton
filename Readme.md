@@ -33,6 +33,7 @@ At a maximum I'd like to perform the above in user mode, with ``program.c`` bein
 
 
 ### Changes
+Each of the items represents a single commit on the genesis branch:
 
 * Replace the scripts with a single Makefile  
   One of the goals in moving forward is improving the build system.
@@ -61,6 +62,15 @@ At a maximum I'd like to perform the above in user mode, with ``program.c`` bein
 * Replace the poor-man's printf with something more [substantial](https://www.menie.org/georges/embedded/printf-stdarg.c)
 
 
+ - The starts of various things at the same time:
+    - Adding the [start of paging](https://wiki.osdev.org/Setting_Up_Paging) and gaining a better understanding after correctly mapping the framebuffer memory region.
+    - Adding limited framebuffer support at 800x600x32 from a side project I did. Also includes a very minimal character font.
+    - [Tabs vs. Spaces](https://www.youtube.com/watch?v=SsoOG6ZeyUI) and moving towards K&R 1TBS with tabs, due to my Java background.  
+    I also use ``vi`` over emacs because I don't know any better. TBH I use ``mcedit`` even more because I was all about that [Norton Commander](https://en.wikipedia.org/wiki/Norton_Commander) life back in the 80's.
+    - Adding the start of an initrd by adding JamesM's ``make_initrd.c``. No code to read anything yet.
+    - Adding the first part of the [littlebook](http://littleosbook.github.io/) chapter on the road to user mode.
+    - Finally renaming the last occurrence of *myos* to **genesis**.
+	
 
 
 ### Targets

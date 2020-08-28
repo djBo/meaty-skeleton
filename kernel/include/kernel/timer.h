@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 
-void init_timer();
+extern void (*timer_func)();
 void timer_wait(uint32_t ticks);
+
+void init_timer();
 
 #endif /* KERNEL_TIMER_H */

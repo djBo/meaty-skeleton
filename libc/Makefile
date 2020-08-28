@@ -34,6 +34,8 @@ stdio/putchar.o \
 stdio/puts.o \
 stdlib/abort.o \
 stdlib/abs.o \
+stdlib/div.o \
+stdlib/div2.o \
 stdlib/itoa.o \
 stdlib/random.o \
 string/memcmp.o \

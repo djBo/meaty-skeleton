@@ -1,5 +1,5 @@
 SYSTEM_HEADER_PROJECTS=libc kernel
-PROJECTS=libc kernel
+PROJECTS=libc kernel tools program
 
 HOST=i686-elf
 HOSTARCH!=if echo $(HOST) | grep -Eq 'i[[:digit:]]86-'; then \
@@ -37,12 +37,13 @@ define GRUB
 set timeout=1
 menuentry "Genesis" {
 	multiboot /boot/kernel.bin args
+	module /boot/program
 }
 endef
 
 export
 
-.PHONY: all clean headers build iso reset docker
+.PHONY: all clean headers build iso reset docker initrd
 
 all: iso qemu
 
@@ -57,11 +58,13 @@ build: headers
 	  DESTDIR="$(SYSROOT)" $(MAKE) -C $${PROJECT} install; \
 	done
 
-iso: build
+iso: build initrd
 	mkdir -p isodir
 	mkdir -p isodir/boot
 	mkdir -p isodir/boot/grub
 	cp sysroot/boot/kernel.bin isodir/boot/kernel.bin
+	cp sysroot/boot/initrd.img isodir/boot/initrd.img
+	cp sysroot/boot/program isodir/boot/program
 	echo "$$GRUB" > isodir/boot/grub/grub.cfg
 	grub-mkrescue -o genesis.iso isodir
 
@@ -82,3 +85,6 @@ reset:
 
 docker:
 	docker build -t genesis docker
+
+initrd: build
+	cd "$(SYSROOT)/boot" && ../bin/make_initrd

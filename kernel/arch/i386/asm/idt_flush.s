@@ -1,5 +1,5 @@
 [GLOBAL idt_flush]
 extern idt_ptr
 idt_flush:
-    lidt [idt_ptr]
-    ret
+	lidt [idt_ptr]
+	ret

@@ -63,7 +63,7 @@ COPY --from=build /opt/cross /opt/cross/
 
 RUN \
 DEBIAN_FRONTEND=noninteractive apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get -y install make libmpc-dev nasm git grub-pc-bin xorriso && \
+DEBIAN_FRONTEND=noninteractive apt-get -y install make libmpc-dev nasm git grub-pc-bin xorriso gcc && \
 rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src
